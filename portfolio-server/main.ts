@@ -1,7 +1,9 @@
-import express, { Express } from 'express';
+import express, {Express} from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import route from './src/routes/api';
+import { connection } from './src/utlis/db';
+import errorHandler from './src/utlis/errorHandler';
+import projectRouter from './src/routes/project.router';
 
 dotenv.config();
 
@@ -10,11 +12,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-app.use(express.json());
+connection();
+
+app.use(errorHandler);
+app.use(express.json({limit: '1000mb'}));
 app.use(express.urlencoded({extended: true}));
 
-app.use('', route)
-
+app.use('/projects', projectRouter);
 
 app.listen(PORT, () => {
   console.log(`server is running on localhost:${PORT}`);
