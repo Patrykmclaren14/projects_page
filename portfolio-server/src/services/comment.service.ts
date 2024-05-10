@@ -1,4 +1,4 @@
-import Project from "../models/project.model";
+import Comment from "../models/comment.model";
 import getRandomId from "../utlis/getRandomId";
 
 const get = async (
@@ -18,22 +18,22 @@ const get = async (
     queryOptions.order = [[sort, order]];
   }
 
-  const allProjects = await Project.findAll(queryOptions);
+  const allComments = await Comment.findAll(queryOptions);
 
-  return allProjects;
+  return allComments;
 };
 
 const getLength = async () => {
-  const length = await Project.count();
+  const length = await Comment.count();
 
   return length;
 };
 
 const getOne = async (id: number) => {
-  const oneProject = await Project.findByPk(id)
+  const oneComment = await Comment.findByPk(id)
 
-  return oneProject;
-}
+  return oneComment;
+};
 
 const getByUser = async (
   userId: string,
@@ -58,78 +58,67 @@ const getByUser = async (
     queryOptions.order = [[sort, orderType]];
   }
 
-  const userProjects = await Project.findAll(queryOptions);
+  const userComments = await Comment.findAll(queryOptions);
 
-  return userProjects;
+  return userComments;
 };
 
 const create = async (
-  image: string,
   title: string,
-  description: string,
-  technologies: string[],
-  repository: string,
-  linkedin: string,
+  message: string,
   userId: string,
+  author: string,
+  authorImage: string,
 ) => {
-  const id = getRandomId();
+  const id: number = 2;
   const likes: string = '{}';
   const visits = 0;
-  const technologiesFormatted = technologies.join(', ');
 
-  return Project.create({
+
+  return Comment.create({
     id,
-    image: `{${image}}`,
     title,
+    message,
     likes,
     visits,
-    description,
-    technologies: `{${technologiesFormatted}}`,
-    repository,
-    linkedin,
     userId,
+    author,
+    authorImage,
   });
 };
 
 const update = async (
   id: number,
-  image: string,
   title: string,
+  message: string,
   likes: string[],
   visits: number,
-  description: string,
-  technologies: string[],
-  repository: string,
-  linkedin: string,
+  author: string,
+  authorImage: string,
 ) => {
-  const technologiesFormatted = technologies.join(', ');
   const formattedLikes = `{${likes}}`
 
-
-  const formattedImage = `{${image}}`;
-
-  await Project.update({
+  await Comment.update({
+    id,
     title,
-    image: formattedImage,
+    message,
     likes: formattedLikes,
     visits,
-    description,
-    technologies: `{${technologiesFormatted}}`,
-    repository,
-    linkedin,
+    author,
+    authorImage,
   }, { where: { id } });
 
-  const updatedProject = await Project.findByPk(id);
+  const updatedComment = await Comment.findByPk(id);
 
-  return updatedProject;
+  return updatedComment;
 };
 
 
 const remove = async (id: number) => {
-  await Project.destroy({ where: { id }})
+  await Comment.destroy({ where: { id }})
 };
 
-const projectService = {
+const commentService = {
   get,
   getLength,
   getOne,
@@ -139,4 +128,4 @@ const projectService = {
   remove,
 };
 
-export default projectService;
+export default commentService;
